@@ -1,41 +1,37 @@
 # Create ALB
-module "alb" {
-  source                           = "terraform-aws-modules/alb/aws"
-  version                          = "~> 8.0"
-  name                             = "my-alb"
-  load_balancer_type               = "application"
-  enable_cross_zone_load_balancing = true
-  vpc_id  = data.terraform_remote_state.vpc.outputs.vpc_id
-  subnets = data.terraform_remote_state.vpc.outputs.public_subnets
+# Load Balancer
+resource "aws_lb" "main" {
+  name               = "main-lb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.asg_sg.id]
+  subnets           = [aws_subnet.private-1.id, aws_subnet.private-2.id, aws_subnet.private-3.id ]
+}
 
-  security_groups = [
-    aws_security_group.alb-sg.id
-  ]
+# Target Group
+resource "aws_lb_target_group" "main" {
+  name     = "asg-target-group"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.task-vpc.id
+}
 
-  target_groups = [
-    {
-      name_prefix      = "pref-"
-      backend_protocol = "HTTP"
-      backend_port     = 80
-      target_type      = "instance"
-    }
-  ]
+# Listener
+resource "aws_lb_listener" "http" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = "80"
+  protocol          = "HTTP"
 
-  http_tcp_listeners = [
-    {
-      port               = 80
-      protocol           = "HTTP"
-      target_group_index = 0
-    }
-  ]
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.main.arn
+  }
 }
 
 
 # ALB Security Group
-resource "aws_security_group" "alb-sg" {
-  description = "ALB Security Group"
-  vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
-
+resource "aws_security_group" "asg_sg" {
+  vpc_id = aws_vpc.task-vpc.id
 
  # Allow HTTP/HTTPS from ALL
   ingress {

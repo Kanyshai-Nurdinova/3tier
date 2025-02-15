@@ -1,18 +1,9 @@
-resource "aws_s3_bucket" "my_bucket" {
-bucket = "bucket-terraform-${random_string.random.result}"
-
-  tags = {
-    Name        = "My bucket"
-    Environment = "Dev"
+terraform {
+  backend "s3" {
+    bucket         = aws_s3_bucket.my_bucket
+    key            = "terraform/statefile.tfstate"
+    region         = "us-east-2"
+    encrypt        = true
+    dynamodb_table = "terraform-lock"
   }
-}
-
-resource "random_string" "random" {
-  length  = 8
-  special = false
-  upper   = false
-}
-
-output "bucket_name" {
-  value = aws_s3_bucket.my_bucket.id
 }

@@ -1,27 +1,53 @@
-module "asg" {
-  source  = "terraform-aws-modules/autoscaling/aws"
-  version = "8.0.1"
+resource "aws_launch_template" "asg" {
+  name_prefix   = var.name_prefix
+  image_id      = var.image_id
+  instance_type = var.instance_type
 
-  name                = "example-asg"
-  min_size           = 1
-  max_size           = 99
-  desired_capacity   = 1
-  vpc_zone_identifier = data.terraform_remote_state.vpc.outputs.private_subnets
-
-  health_check_type = "EC2"
-  
-  # Define launch template correctly
-  
-    launch_template_name          = "example-asg"
-    launch_template_description   = "Launch template example"
-    image_id      = "ami-0952a345dcc6cd699"
-    instance_type = "t3.micro"
-    ebs_optimized = false
-  
-
-  tags = {
-    Name        = "asg-instance"
-    Environment = "dev"
+  network_interfaces {
+    associate_public_ip_address = true
+    security_groups             = [aws_security_group.asg_sg.id]
   }
 }
 
+resource "aws_autoscaling_group" "wordpress" {
+  vpc_zone_identifier = var.subnets
+  desired_capacity   = var.desired_capacity
+  max_size           = var.max_size
+  min_size           = var.min_size
+
+  launch_template {
+    id      = aws_launch_template.asg.id
+    version = "$Latest"
+    
+  }
+}
+
+
+resource "aws_elb" "wordpress" {
+  name               = "wordpress-terraform-elbs"
+  subnets  = var.subnets
+  listener {
+    instance_port     = 80
+    instance_protocol = "http"
+    lb_port           = 80
+    lb_protocol       = "http"
+  }
+  health_check {
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 3
+    target              = "TCP:80"
+    interval            = 30
+  }
+  cross_zone_load_balancing   = true
+  idle_timeout                = 400
+  connection_draining         = true
+  connection_draining_timeout = 400
+}
+
+
+
+resource "aws_autoscaling_attachment" "asg_attachment_bar" {
+  autoscaling_group_name = aws_autoscaling_group.wordpress.id
+  elb                    = aws_elb.wordpress.id
+}
