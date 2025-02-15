@@ -1,7 +1,7 @@
 data "terraform_remote_state" "vpc" {
   backend = "s3"
   config = {
-    bucket = var.state_bucket
+    bucket = "3tier-app-oct24"
     key    = "path/to/my/key"
     region = "us-east-2"
   }
@@ -10,7 +10,7 @@ data "terraform_remote_state" "vpc" {
 data "terraform_remote_state" "db" {
   backend = "s3"
   config = {
-    bucket = var.state_bucket
+    bucket = "3tier-app-oct24"
     key    = "path/to/my/db"
     region = "us-east-2"
   }
