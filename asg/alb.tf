@@ -1,77 +1,28 @@
-# Create ALB
-# Load Balancer
-resource "aws_lb" "main" {
-  name               = "main-lb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.asg_sg.id]
-  subnets           = [aws_subnet.private-1.id, aws_subnet.private-2.id, aws_subnet.private-3.id ]
-}
-
-# Target Group
-resource "aws_lb_target_group" "main" {
-  name     = "asg-target-group"
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.task-vpc.id
-}
-
-# Listener
-resource "aws_lb_listener" "http" {
-  load_balancer_arn = aws_lb.main.arn
-  port              = "80"
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.main.arn
+resource "aws_elb" "bar" {
+  name               = "foobar-terraform-elbs"
+  availability_zones = data.aws_availability_zones.all.names
+  security_groups    = [aws_security_group.asg-sec-group.id]
+  listener {
+    instance_port     = 80
+    instance_protocol = "http"
+    lb_port           = 80
+    lb_protocol       = "http"
   }
+  health_check {
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    timeout             = 3
+    target              = "HTTP:80/"
+    interval            = 30
+  }
+  cross_zone_load_balancing   = true
+  idle_timeout                = 400
+  connection_draining         = true
+  connection_draining_timeout = 400
 }
 
 
-# ALB Security Group
-resource "aws_security_group" "asg_sg" {
-  vpc_id = aws_vpc.task-vpc.id
-
- # Allow HTTP/HTTPS from ALL
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-# Allow HTTP/HTTPS from ALL
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-# Allow All Outbound
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+resource "aws_autoscaling_attachment" "asg_attachment_bar" {
+  autoscaling_group_name = aws_autoscaling_group.example.id
+  elb                    = aws_elb.bar.id
 }
-
-# Route 53 CNAME record pointing ALB to blog.example.com
-
-resource "aws_route53_record" "www" {
-  zone_id = "Z031535353A87956940A"
-  name    = "www.caramans.com"
-  type    = "CNAME"
-  ttl     = 300
-  records = [module.alb.lb_dns_name]
-}
-
