@@ -21,7 +21,7 @@ resource "aws_rds_cluster_instance" "writer" {
 
 # Reader instances
 resource "aws_rds_cluster_instance" "reader1" {
-  identifier         = "aurora-reader"
+  identifier         = "aurora-reader1"
   cluster_identifier = aws_rds_cluster.aurora_cluster.id
   instance_class     = var.instance_class
   engine            = aws_rds_cluster.aurora_cluster.engine
@@ -30,7 +30,7 @@ resource "aws_rds_cluster_instance" "reader1" {
 }
 
 resource "aws_rds_cluster_instance" "reader2" {
-  identifier         = "aurora-reader"
+  identifier         = "aurora-reader2"
   cluster_identifier = aws_rds_cluster.aurora_cluster.id
   instance_class     = var.instance_class
   engine            = aws_rds_cluster.aurora_cluster.engine
@@ -39,7 +39,7 @@ resource "aws_rds_cluster_instance" "reader2" {
 }
 
 resource "aws_rds_cluster_instance" "reader3" {
-  identifier         = "aurora-reader"
+  identifier         = "aurora-reader3"
   cluster_identifier = aws_rds_cluster.aurora_cluster.id
   instance_class     = var.instance_class
   engine            = aws_rds_cluster.aurora_cluster.engine
