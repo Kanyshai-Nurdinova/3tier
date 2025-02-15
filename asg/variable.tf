@@ -9,5 +9,5 @@ variable "instancetype" {
 
 
 variable "state_bucket" {
-  
+   default  = "3tier-app-oct24"
 }
