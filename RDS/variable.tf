@@ -4,6 +4,7 @@ variable "region" {
 
 variable "my_zone"{
   default = "octdevops.click"
+}
 
 variable "identifier"{
   default = "static-member-1"
