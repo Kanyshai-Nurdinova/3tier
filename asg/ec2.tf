@@ -1,7 +1,7 @@
 resource "aws_instance" "wordpress" {
   ami           = "data.aws_ami.image.id"  # Use the latest Amazon Linux AMI
   instance_type = "t2.micro"
-  subnet_id     = aws_subnet.public_subnet.id
+  subnet_id     = aws_subnet.public_1.id
   security_groups = [aws_security_group.ec2_sg.id]
 
   user_data = <<-EOF
@@ -21,3 +21,4 @@ resource "aws_instance" "wordpress" {
               systemctl restart httpd
               EOF
 }
+

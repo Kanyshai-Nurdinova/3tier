@@ -4,10 +4,11 @@ variable "region" {
 }
 
 variable "instancetype" {
-     default = "t3.micro"
+     default = "t2.micro"
 }
 
 
 variable "state_bucket" {
    default  = "3tier-app-oct24"
 }
+
