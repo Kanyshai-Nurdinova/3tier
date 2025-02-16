@@ -12,9 +12,6 @@ variable "state_bucket" {
    default  = "3tier-app-oct24"
 }
 
-variable "region" {
-  default = "us-east-2"
-}
 
 variable "my_zone"{
   default = "octdevops.click"
