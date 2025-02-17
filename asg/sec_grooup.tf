@@ -1,6 +1,7 @@
 resource "aws_security_group" "asg-sec-group" {
   name        = "asg-sec-group"
   description = "Allow TLS inbound traffic"
+  vpc_id = aws_vpc.task-vpc.id
   ingress {
     description = "TLS from VPC"
     from_port   = 22
