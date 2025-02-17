@@ -34,7 +34,7 @@ resource "aws_autoscaling_group" "wordpress_asg" {
 
 resource "aws_launch_configuration" "wordpress_lc" {
   name          = "wordpress-lc"
-  image_id      = "ami-0c55b159cbfafe1f0"
+  image_id      = "ami-07f463d9d4a6f005f"
   instance_type = "t2.micro"
   security_groups = [aws_security_group.ec2_sg.id]
 
