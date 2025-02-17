@@ -22,3 +22,16 @@ resource "aws_instance" "wordpress" {
               EOF
 }
 
+data "aws_ami" "image" {
+  most_recent = true
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+ 
+  owners = ["amazon"] # Canonical
+}
+
+output "AMI_ID" {
+  value = data.aws_ami.image.id
+}
