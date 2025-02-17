@@ -1,5 +1,5 @@
 resource "aws_security_group" "alb_sg" {
-  vpc_id = aws_vpc.main.id
+  vpc_id = aws_vpc.task-vpc.id
 
   ingress {
     from_port   = 80
@@ -10,7 +10,7 @@ resource "aws_security_group" "alb_sg" {
 }
 
 resource "aws_security_group" "ec2_sg" {
-  vpc_id = aws_vpc.main.id
+  vpc_id = aws_vpc.task-vpc.id
 
   ingress {
     from_port       = 22
@@ -28,7 +28,7 @@ resource "aws_security_group" "ec2_sg" {
 }
 
 resource "aws_security_group" "rds_sg" {
-  vpc_id = aws_vpc.main.id
+  vpc_id = aws_vpc.task-vpc.id
 
   ingress {
     from_port       = 3306
