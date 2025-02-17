@@ -7,7 +7,7 @@ resource "aws_vpc" "task-vpc" {
 }
 
 resource "aws_subnet" "private-1" {
-  vpc_id            = aws_vpc.main.id
+  vpc_id            = aws_vpc.task-vpc.id
   cidr_block        = "10.0.1.0/24"
   availability_zone = data.aws_availability_zones.av-azs.names[0]
   tags = {
