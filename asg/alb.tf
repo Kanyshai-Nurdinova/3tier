@@ -24,6 +24,6 @@ resource "aws_elb" "bar" {
 
 
 resource "aws_autoscaling_attachment" "wordpress_asg" {
-  autoscaling_group_name = aws_autoscaling_group.example.id
+  autoscaling_group_name = aws_autoscaling_group.wordpress_asg.id
   elb                    = aws_elb.bar.id
 }
