@@ -1,5 +1,5 @@
 resource "aws_instance" "wordpress" {
-  ami           = "ami-07f463d9d4a6f005f" # Use the latest Amazon Linux AMI
+  ami           = "ami-0604f27d956d83a4d" # Use the latest Amazon Linux AMI
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.public-1.id
   security_groups = [aws_security_group.ec2_sg.id]
