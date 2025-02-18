@@ -1,7 +1,7 @@
 resource "aws_elb" "bar" {
   name               = "foobar-terraform-elbs"
   availability_zones = data.aws_availability_zones.all.names
-  security_groups    = [aws_security_group.alb_sg.id]
+  security_group    = [aws_security_group.alb_sg.id]
   
   listener {
     instance_port     = 80
