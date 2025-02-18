@@ -26,7 +26,7 @@
 
 resource "aws_autoscaling_group" "wordpress_asg" {
  // availability_zones = data.aws_availability_zones.all.names
-  vpc_zone_identifier = [aws_subnet.public-1.id]
+  vpc_zone_identifier = [aws_subnet.public-1.id, aws_subnet.public-2.id, aws_subnet.public-3.id]
   desired_capacity    = 2
   min_size           = 1
   max_size           = 3
