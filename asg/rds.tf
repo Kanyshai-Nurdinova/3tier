@@ -2,6 +2,7 @@ resource "aws_rds_cluster" "aurora_cluster" {
   cluster_identifier      = var.identifier
   engine                 = var.engine
   engine_version         = var.engine_version
+  availability_zones    =  data.aws_availability_zones.all.names
   database_name          = var.database_name
   master_username        = var.db_username
   master_password        = random_password.password.result
