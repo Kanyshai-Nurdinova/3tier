@@ -29,20 +29,16 @@ resource "aws_autoscaling_group" "wordpress_asg" {
   desired_capacity    = 2
   min_size           = 1
   max_size           = 3
-  launch_configuration = aws_launch_configuration.wordpress_lc.id
-}
+  
 
-resource "aws_launch_configuration" "wordpress_lc" {
-  name          = "wordpress-lc"
-  image_id      = "ami-0604f27d956d83a4d"
-  instance_type = "t2.micro"
-  security_groups = [aws_security_group.ec2_sg.id]
+  launch_template {
+    id      = aws_launch_template.wordpress_lt.id
+    version = "$Latest"
+  }
 
-  user_data = <<-EOF
-              #!/bin/bash
-              yum update -y
-              yum install -y httpd php php-mysqlnd
-              systemctl start httpd
-              systemctl enable httpd
-              EOF
+  tag {
+    key                 = "Name"
+    value               = "wordpress-asg-instance"
+    propagate_at_launch = true
+  }
 }

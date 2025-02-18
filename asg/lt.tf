@@ -21,3 +21,25 @@
 #               systemctl restart httpd
 #               EOF
 # }
+
+resource "aws_launch_template" "wordpress_lt" {
+  name_prefix   = "wordpress-lt"
+  image_id      = "ami-0604f27d956d83a4d"  # Replace with your AMI ID
+  instance_type = "t2.micro"
+
+  key_name = aws_key_pair.asg-key-pair.key_name  # Replace with your key pair name
+
+  network_interfaces {
+    associate_public_ip_address = true
+    security_groups             = [aws_security_group.ec2_sg.id]
+  }
+
+  tag_specifications {
+    resource_type = "instance"
+    tags = {
+      Name = "wordpress-instance"
+    }
+  }
+
+  user_data = base64encode(file("userdata.sh")) # Bootstrap script
+}
