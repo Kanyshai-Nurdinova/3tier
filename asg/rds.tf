@@ -2,13 +2,20 @@ resource "aws_rds_cluster" "aurora_cluster" {
   cluster_identifier      = var.identifier
   engine                 = var.engine
   engine_version         = var.engine_version
-  availability_zones    =  data.aws_availability_zones.all.names
+  db_subnet_group_name = aws_db_subnet_group.aurora_subnet_group.name
   database_name          = var.database_name
   master_username        = var.db_username
   master_password        = random_password.password.result
   skip_final_snapshot    = true
   backup_retention_period = 7
 }
+
+resource "aws_db_subnet_group" "aurora_subnet_group" {
+  name       = "aurora-subnet-group"
+  subnet_ids = [aws_subnet.public-1.id, aws_subnet.public-2.id, aws_subnet.public-3.id]  # Ensure these belong to a valid VPC
+  description = "Subnet group for Aurora RDS"
+}
+
 
 # Writer instance
 resource "aws_rds_cluster_instance" "writer" {
